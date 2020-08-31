@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 import requests
 import json
 import discord
+import datetime
+import jpholiday
 
 
 # 自分のBotのアクセストークンに置き換えてください
@@ -20,6 +22,18 @@ async def on_ready():
     await client.wait_until_ready()
     channel = client.get_channel(int(CHANNNEL))
     await channel.send("```おはよう！```")
+    now = datetime.datetime.now()
+    today = now.date()
+    holy = ""
+    sendy = ""
+    if jpholiday.is_holiday(today) == True:
+        holy = jpholiday.is_holiday_name(today)
+        sendy = "```今日は{}だよ！```".format(holy)
+        print(sendy)
+        await channel.send(sendy)
+    else:
+        None
+
     print("ON")                
     #weather
     city = "Osaka"#居住区の名称を入力
