@@ -7,4 +7,4 @@ Herokuのタイムスケジューラーを前提に書いています。
     25行目：city = ""居住区の名称を入力
     26行目：key = ''#OpenWeatherAPIのAPIKEYを入力 
     101行目：img = ""#newsAPIから帰ってきたJSONにURL_Imageがない場合の画像
-
+    requirements.txt、runtime.txt、ProcfileはHerokuで動作させるためのファイルです。
