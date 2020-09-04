@@ -92,7 +92,7 @@ async def on_ready():
     out_weather.add_field(name = "湿度",value = hmdy,inline=False)
     out_weather.set_thumbnail(url = pic_url)
     await channel.send(embed = out_weather)
-    # await channel.send("おはようございます！\n7:30分だよ！全員起床！\n今日の大阪府の天気は・・・\n"+"天気："+ puts + "最高気温:" + max_temp + "最低気温：" + min_temp + "湿度：" + hmdy)
+    
 
 
 
