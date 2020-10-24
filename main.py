@@ -6,38 +6,45 @@ import discord
 import datetime
 import jpholiday
 
-
-#Bot access token 
+#Bot TOKEN
 TOKEN = ''
-
-CHANNNEL = "" #channel ID
+#CHANNEL ID
+CHANNNEL = "" 
 
 client = discord.Client()
 
+dayofweek = ['日曜日','月曜日','火曜日','水曜日','木曜日','金曜日','土曜日']
 
+# 起動時に動作する処理
 @client.event
 async def on_ready():
     print('complete set up.')
     await client.wait_until_ready()
     channel = client.get_channel(int(CHANNNEL))
     await channel.send("```おはよう！```")
-    now = datetime.datetime.now()
-    today = now.date()
+    # 起動したらターミナルにログイン通知が表示される
+    now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9)))
+    marume = now.strftime('%Y年%m月%d日')
+    weekday = now.strftime('%w')
+    week = dayofweek[int(weekday)]
+    ato = datetime.date(now.year,now.month,now.day)
+    outdayly = (marume+"  ("+week+")")
     holy = ""
     sendy = ""
-    if jpholiday.is_holiday(today) == True:
-        holy = jpholiday.is_holiday_name(today)
+    if jpholiday.is_holiday(ato) == True:
+        holy = jpholiday.is_holiday_name(ato)
         sendy = "今日は{}だよ！".format(holy)
         print(sendy)
     else:
-        sendy = "今日も一日頑張りましょう！"
+        if weekday == "6" or weekday == "0":
+            sendy = "今日は休日です。ごゆっくりどうぞ！"
+        else:
+            sendy = "今日も一日頑張りましょう！"
     print("ON")                
     #weather
-    city = "Osaka"#居住区の名称を入力
-    key = ''#OpenWeatherAPIのAPIKEYを入力 
+    city = "Osaka"#your City
+    key = ''#Open Weather map API key {https://openweathermap.org/}
     url = "http://api.openweathermap.org/data/2.5/forecast?&q="+city+",JP&units=metric&lang=ja&cnt=7&APPID="+ key
-
-
 
     get_deta = requests.get(url)
 
@@ -54,9 +61,9 @@ async def on_ready():
     min_tmp=[]
     max_tmp=[]
 
+
     for cnt in range(len(j_data["list"])):
         print(len(j_data["list"]))
-        print(cnt)
         time.append(j_data["list"][cnt]["dt_txt"])
         icon=(j_data["list"][cnt]["weather"][0]["icon"])
         humidity.append(j_data["list"][cnt]["main"]["humidity"])
@@ -81,8 +88,8 @@ async def on_ready():
             puts.append("霧")
 
     out_weather = discord.Embed(title = "今日の大阪府の天気！",color = discord.Colour.from_rgb(18,207,224))
-    out_weather.add_field(name = datetime.date.today(), value = sendy,inline=False)
-    #weather
+    out_weather.add_field(name = outdayly, value = sendy,inline=False)
+    #tenki
     out_weather.add_field(name = "03:00",value = puts[0],inline=True)
     out_weather.add_field(name = "06:00",value = puts[1],inline=True)
     out_weather.add_field(name = "09:00",value = puts[2],inline=True)
@@ -94,8 +101,10 @@ async def on_ready():
     out_weather.add_field(name = "最低気温",value = min_tmp[2],inline=False)
     out_weather.add_field(name = "湿度",value = "朝"+str(humidity[2])+"→"+"夜"+str(humidity[4]),inline=False)
     await channel.send(embed = out_weather)
+    #API Key (NEWS API{https://newsapi.org/})
+    n_key = ''
+    indeta = requests.get("http://newsapi.org/v2/top-headlines?country=jp&apiKey="+n_key)
 
-    indeta = requests.get("")#newsAPIのAPI_KEY
 
     w_deta = indeta.json()
 
@@ -126,5 +135,4 @@ async def on_ready():
 
 
 
-# Botの起動とDiscordサーバーへの接続
 client.run(TOKEN)
